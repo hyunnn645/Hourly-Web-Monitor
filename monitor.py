@@ -52,8 +52,8 @@ def run_monitor():
                 value = int(numbers[-1])
                 print(f"Current Value: {value}")
 
-                if value < 20:
-                    msg = f"⚠️ [시스템 알림]\n타겟 수치가 20 미만입니다!\n현재 수치: {value}"
+                if value <= 20:
+                    msg = f"⚠️ [알림]\n가능 수치: {20-value}"
                     send_telegram_message(msg)
             else:
                 print("No numbers found.")
