@@ -52,7 +52,7 @@ def run_monitor():
                 value = int(numbers[-1])
                 print(f"Current Value: {value}")
 
-                if value <= 20:
+                if value < 20:
                     msg = f"⚠️ [알림]\n가능 수치: {20-value}"
                     send_telegram_message(msg)
             else:
