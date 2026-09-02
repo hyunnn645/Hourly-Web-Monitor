@@ -32,8 +32,10 @@ jobs:
           TARGET_URL: ${{ secrets.TARGET_URL }}
           SITE_ID: ${{ secrets.SITE_ID }}
           SITE_PW: ${{ secrets.SITE_PW }}
-          TARGET_SELECTOR: ${{ secrets.TARGET_SELECTOR }}
+          AUTH_COOKIE: ${{ secrets.AUTH_COOKIE }}
+          TARGET_SELECTOR2: ${{ secrets.TARGET_SELECTOR2 }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           python monitor.py
