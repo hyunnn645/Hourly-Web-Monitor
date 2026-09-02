@@ -6,7 +6,7 @@ from playwright.sync_api import sync_playwright
 TARGET_URL = os.getenv("TARGET_URL")
 SITE_ID = os.getenv("SITE_ID")
 SITE_PW = os.getenv("SITE_PW")
-TARGET_SELECTOR = os.getenv("TARGET_SELECTOR")
+TARGET_SELECTOR = os.getenv("TARGET_SELECTOR2")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
@@ -41,10 +41,10 @@ def run_monitor():
 
         try:
             page.wait_for_selector(TARGET_SELECTOR, timeout=15000)
-            
-            page.wait_for_timeout(4000) 
-            
             element = page.locator(TARGET_SELECTOR)
+            
+            element.element_handle().wait_for_function('el => el.innerText.trim() !== ""', timeout=5000)
+
             raw_text = element.inner_text().strip()
             numbers = re.findall(r'\d+', raw_text)
             
