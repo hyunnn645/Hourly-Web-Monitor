@@ -43,7 +43,7 @@ def run_monitor():
             page.wait_for_selector(TARGET_SELECTOR, timeout=15000)
             element = page.locator(TARGET_SELECTOR)
             
-            element.element_handle().wait_for_function('el => el.innerText.trim() !== ""', timeout=5000)
+            page.wait_for_timeout(4000)
 
             raw_text = element.inner_text().strip()
             numbers = re.findall(r'\d+', raw_text)
