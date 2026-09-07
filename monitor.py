@@ -6,7 +6,7 @@ from playwright.sync_api import sync_playwright
 TARGET_URL = os.getenv("TARGET_URL")
 SITE_ID = os.getenv("SITE_ID")
 SITE_PW = os.getenv("SITE_PW")
-TARGET_SELECTOR = os.getenv("TARGET_SELECTOR2")
+TARGET_SELECTOR = os.getenv("TARGET_SELECTOR")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
@@ -59,7 +59,7 @@ def run_monitor():
                 print("No numbers found.")
                 
         except Exception as e:
-            print("Error occurred.")
+            print(f"Error occurred: {e}")
 
         browser.close()
 
