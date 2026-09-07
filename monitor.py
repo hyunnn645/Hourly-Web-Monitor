@@ -44,7 +44,7 @@ def check_account(browser, account_name, site_id, site_pw):
         page.wait_for_selector(TARGET_SELECTOR, timeout=15000)
         
         # 🚀 대기 시간 최적화: 4초 대기를 1.5초로 축소
-        page.wait_for_timeout(1500)
+        page.wait_for_timeout(4000)
 
         raw_text = page.locator(TARGET_SELECTOR).inner_text().strip()
         numbers = re.findall(r'\d+', raw_text)
