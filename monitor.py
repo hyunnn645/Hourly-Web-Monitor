@@ -20,9 +20,9 @@ def update_github_secret(new_cookie):
         print("GH_PAT가 없어 Secret 자동 갱신을 건너뜁니다.")
         return
     try:
-        p = subprocess.Popen(['gh', 'auth', 'login', '--with-token'], stdin=subprocess.PIPE)
-        p.communicate(input=GH_PAT.encode())
-        subprocess.run(['gh', 'secret', 'set', 'AUTH_COOKIE', '-b', new_cookie, '-R', GITHUB_REPOSITORY], check=True)
+        env = os.environ.copy()
+        env["GH_TOKEN"] = GH_PAT
+        subprocess.run(['gh', 'secret', 'set', 'AUTH_COOKIE', '-b', new_cookie, '-R', GITHUB_REPOSITORY], check=True, env=env)
         print("✅ 쿠키 만료 감지됨: 새 쿠키를 발급받아 자동 덮어썼습니다.")
     except Exception as e:
         print(f"Secret 업데이트 실패: {e}")
@@ -44,7 +44,6 @@ def run_monitor():
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         )
         
-        # 1. 기존 쿠키가 있으면 브라우저에 장착
         if AUTH_COOKIE:
             domain = ".miricanvas.com"
             cookies = []
@@ -57,14 +56,12 @@ def run_monitor():
         page = context.new_page()
         page.goto(TARGET_URL)
 
-        # 2. 쿠키가 없거나 만료되어 로그인 화면(이메일 입력칸)이 나타났는지 확인
         try:
             page.wait_for_selector('input[placeholder="이메일"]', timeout=5000)
             is_login_required = True
         except:
             is_login_required = False
 
-        # 3. 로그인이 풀렸을 경우: 비상 로그인 후 영구 쿠키 발급 및 갱신
         if is_login_required:
             print("로그인이 필요합니다. 비상 로그인을 시도합니다.")
             if not SITE_ID or not SITE_PW:
@@ -74,24 +71,20 @@ def run_monitor():
             page.fill('input[placeholder="이메일"]', SITE_ID)
             page.fill('input[placeholder="비밀번호"]', SITE_PW)
             
-            # 영구 쿠키를 받기 위해 '로그인 유지하기' 체크박스 클릭
             try:
                 page.locator('label:has-text("로그인 유지하기")').click(timeout=3000)
             except:
                 pass
                 
             page.click('button[type="submit"]')
-            page.wait_for_timeout(5000) # 로그인 처리 대기
+            page.wait_for_timeout(5000)
             
-            # 새 쿠키 추출 및 GitHub Secrets 업데이트
             new_cookies = context.cookies()
             cookie_str = "; ".join([f"{c['name']}={c['value']}" for c in new_cookies])
             update_github_secret(cookie_str)
             
-            # 대시보드로 다시 이동
             page.goto(TARGET_URL)
 
-        # 4. 수치 확인 로직 (작성하신 코드 원본 유지)
         try:
             page.wait_for_selector(TARGET_SELECTOR, timeout=15000)
             element = page.locator(TARGET_SELECTOR)
@@ -112,7 +105,7 @@ def run_monitor():
                 print("No numbers found.")
                 
         except Exception as e:
-            print("Error occurred.")
+            print(f"Error occurred: {e}")
 
         browser.close()
 
